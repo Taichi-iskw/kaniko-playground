@@ -4,6 +4,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as ecr_assets from 'aws-cdk-lib/aws-ecr-assets';
 
 
 export class KanikoPlaygroundStack extends cdk.Stack {
@@ -29,13 +30,18 @@ export class KanikoPlaygroundStack extends cdk.Stack {
       iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ContainerRegistryPowerUser')
     );
 
+    // kaniko image
+    const kanikoAsset = new ecr_assets.DockerImageAsset(this, 'KanikoImage', {
+      directory: 'kaniko-image', 
+      platform: ecr_assets.Platform.LINUX_AMD64,
+    });
+
     const taskDef = new ecs.FargateTaskDefinition(this, 'TaskDef', {
       taskRole,
     });
 
     taskDef.addContainer('KanikoContainer', {
-      image: ecs.ContainerImage.fromRegistry('gcr.io/kaniko-project/executor:latest'),
-      entryPoint: ['/bin/sh', '-c'],
+      image: ecs.ContainerImage.fromDockerImageAsset(kanikoAsset),
       command: ['sleep infinity'],
       logging: ecs.LogDriver.awsLogs({
         logGroup,
