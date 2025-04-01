@@ -16,7 +16,10 @@ export class KanikoPlaygroundStack extends cdk.Stack {
       natGateways: 0,
     });
 
-    const cluster = new ecs.Cluster(this, 'Cluster', { vpc });
+    const cluster = new ecs.Cluster(this, 'Cluster', { 
+      vpc,
+      clusterName: 'kaniko-playground-cluster',
+     });
 
     const logGroup = new logs.LogGroup(this, 'KanikoLogs', {
       retention: logs.RetentionDays.ONE_DAY,
