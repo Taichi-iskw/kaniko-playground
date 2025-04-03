@@ -30,6 +30,10 @@ export class KanikoPlaygroundStack extends cdk.Stack {
     });
 
     taskRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess')
+    );
+
+    taskRole.addManagedPolicy(
       iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ContainerRegistryPowerUser')
     );
 
