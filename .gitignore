@@ -15,3 +15,6 @@ cdk-assets/
 *.cdk.out
 *.cdk.assets
 cdk.json
+
+# Kaniko
+kaniko-image/executor

@@ -1,15 +1,18 @@
-FROM alpine:3.18
+FROM ubuntu:22.04
 
-RUN apk add --no-cache bash curl aws-cli
+ENV DEBIAN_FRONTEND=noninteractive
 
-ENV KANIKO_VERSION=v1.21.0
+RUN apt-get update && apt-get install -y \
+    curl bash awscli git ca-certificates && \
+    apt-get clean
 
-RUN mkdir -p /kaniko && \
-    curl -L -o /kaniko/executor \
-    https://github.com/GoogleContainerTools/kaniko/releases/download/${KANIKO_VERSION}/executor && \
-    chmod +x /kaniko/executor
+COPY executor /kaniko/executor
+RUN chmod +x /kaniko/executor
 
+RUN /kaniko/executor version
+
+# デフォルト動作（デバッグ用）
 WORKDIR /workspace
 
 ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["sleep infinity"]
+CMD ["sleep", "infinity"]
